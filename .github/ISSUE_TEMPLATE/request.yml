@@ -1,0 +1,63 @@
+name: Request (optional parent)
+description: A parent Issue that groups several atomic work-items. Receives no branch and no PR. Use only when one request needs to track multiple children.
+title: "[request] "
+labels: ["harness:request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## About this form
+
+        This is the **parent request** Issue. It groups several atomic
+        `work-item` Issues. It does **not** receive an implementation
+        branch or a pull request.
+
+        Every piece of work lives in its own `work-item` Issue with
+        a Human Spec body plus append-only Hard Spec and Gherkin comments.
+
+        See `docs/issues.md` in this repository for the full schema.
+  - type: input
+    id: slug
+    attributes:
+      label: Short slug
+      description: Lowercase, hyphenated. Used to identify this request in discussions.
+      placeholder: reporting-v2
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What the human wants and why, in their own words. No implementation detail.
+      placeholder: |
+        We need a new reporting workflow that can be delivered in several atomic steps.
+        ...
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope
+      description: Anything not enumerated here is not promised.
+      placeholder: |
+        - No migration of existing reports.
+        - No unrelated user-interface changes.
+    validations:
+      required: false
+  - type: textarea
+    id: child-issues
+    attributes:
+      label: Child work-items
+      description: GitHub Issue numbers of the child work-items that satisfy this request, one per line.
+      placeholder: |
+        #101 - export command
+        #102 - format serializer
+    validations:
+      required: false
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Free-form context. Links, screenshots, related discussions.
+    validations:
+      required: false
