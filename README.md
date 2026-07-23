@@ -17,7 +17,7 @@ portable; OpenCode is the first-class runner.
   Judge `PRE_MUTATION` → Mutation → Judge `FINAL` → PR) that ends with
   a pull request into `dev`, never `main`.
 - Durable local memory that lives next to the code, under
-  `<feature-root>/.ai/work-items/<issue>-<slug>/`.
+  `<feature-root>/.ai/work-items/<issue-number>-<slug>/`.
 - Stack-agnostic policies: the project, not the template, defines the
   test runner and mutation command.
 

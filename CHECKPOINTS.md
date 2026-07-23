@@ -40,12 +40,12 @@ threshold; this checklist references them but invents no defaults.
 
 ## C4 — Local memory is on disk
 
-- [ ] `<feature-root>/.ai/work-items/<issue>-<slug>/progress.md`
+- [ ] `<feature-root>/.ai/work-items/<issue-number>-<slug>/progress.md`
       exists and is current.
-- [ ] `<feature-root>/.ai/work-items/<issue>-<slug>/decisions.md`
+- [ ] `<feature-root>/.ai/work-items/<issue-number>-<slug>/decisions.md`
       exists and is current.
 - [ ] A run file
-      `<feature-root>/.ai/work-items/<issue>-<slug>/runs/RNNN.md`
+      `<feature-root>/.ai/work-items/<issue-number>-<slug>/runs/RNNN.md`
       exists and is immutable.
 - [ ] Local memory does not duplicate the Hard Spec or the Gherkin.
 

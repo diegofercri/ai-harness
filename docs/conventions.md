@@ -28,7 +28,7 @@ MUST be written in English.
 - Decision IDs: `D-123-001`, where `123` is the Issue number.
 - Runs: `R001`, `R002`, and so on.
 - Slugs: lowercase ASCII words separated by one hyphen.
-- Branches: `<type>/<issue>-<slug>`, where type is `feature`, `bugfix`,
+- Branches: `<type>/<issue-number>-<slug>`, where type is `feature`, `bugfix`,
   `chore`, or `refactor`.
 
 Identifiers are stable and never reused. A superseding revision, decision,
@@ -62,7 +62,7 @@ comments are not approvals.
 Local memory uses:
 
 ```text
-<feature-root>/.ai/work-items/<issue>-<slug>/
+<feature-root>/.ai/work-items/<issue-number>-<slug>/
   progress.md
   decisions.md
   runs/RNNN.md

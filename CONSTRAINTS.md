@@ -82,7 +82,7 @@ follow RFC 2119.
 ## Local memory
 
 - Durable memory MUST live under
-  `<feature-root>/.ai/work-items/<issue>-<slug>/`.
+  `<feature-root>/.ai/work-items/<issue-number>-<slug>/`.
 - That directory MUST contain `progress.md`, `decisions.md`, and
   `runs/RNNN.md` files.
 - Local memory MUST NOT duplicate the Hard Spec or the Gherkin.

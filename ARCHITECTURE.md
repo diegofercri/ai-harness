@@ -27,7 +27,7 @@ codebase may contradict it.
 | `.opencode/agents/`                                 | OpenCode adapters that load canonical contracts and enforce permissions. |
 | `skills/`                                           | OpenCode skill definitions (for example `clean-code`).              |
 | `.github/`                                          | Issue Forms, PR template, and mechanical PR checks.                 |
-| `<feature-root>/.ai/work-items/<issue>-<slug>/`     | Durable local memory for one Issue.                                 |
+| `<feature-root>/.ai/work-items/<issue-number>-<slug>/`     | Durable local memory for one Issue.                                 |
 
 ## Artifact model
 
@@ -72,7 +72,7 @@ Approval ordering:
 ## Local memory model
 
 Durable implementation memory lives under
-`<feature-root>/.ai/work-items/<issue>-<slug>/`:
+`<feature-root>/.ai/work-items/<issue-number>-<slug>/`:
 
 - `progress.md` — current run state, blockers, next steps.
 - `decisions.md` — decisions, alternatives, and reasons.

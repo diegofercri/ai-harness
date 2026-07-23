@@ -23,7 +23,7 @@ This repository uses an OpenCode-first, tool-portable engineering workflow. The 
 - `docs/tdd.md`: test-driven development guidance.
 - `docs/verification.md`: project test policy.
 - `docs/mutation-testing.md`: configured mutation command and threshold.
-- `<feature-root>/.ai/work-items/<issue>-<slug>/`: local progress, decisions, and run records.
+- `<feature-root>/.ai/work-items/<issue-number>-<slug>/`: local progress, decisions, and run records.
 - `.github/pull_request_template.md`: required PR evidence.
 - `.github/workflows/enforce-dev-pr.yml`: mechanical PR policy check; branch protection must require it.
 - `agents/`: canonical agent behavior shared across runtimes.
