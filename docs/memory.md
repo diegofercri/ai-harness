@@ -40,7 +40,7 @@ The current handoff is replaceable while a run is active:
 - Revisions: HS-001, GH-001
 - Last verified commit: <current HEAD before the next commit>
 - Next action: <one concrete action>
-- Blockers: none | <Issue comment URL>
+- Blockers: none | <Issue note URL>
 ```
 
 The lifecycle timeline is append-only:
@@ -54,8 +54,8 @@ The lifecycle timeline is append-only:
 Corrections are new timeline entries. Do not rewrite historical entries.
 Before quality gates, mark the handoff `candidate-ready` and close the active
 run. Commit those final memory changes with the implementation. The resulting
-SHA is recorded in Issue gate comments, not written back into memory, which
-would create a new SHA. Gate and merge events remain in the Issue and PR.
+SHA is recorded in Issue gate notes, not written back into memory, which
+would create a new SHA. Gate and merge events remain in the Issue and MR.
 
 ## `decisions.md`
 
@@ -91,8 +91,8 @@ It records actual execution, not intended execution:
 
 ## Contract references
 - Issue: <URL>
-- Hard Spec: HS-001 <comment URL>
-- Gherkin: GH-001 <comment URL>
+- Hard Spec: HS-001 <note URL>
+- Gherkin: GH-001 <note URL>
 
 ## TDD and verification
 - @s001 RED: <command and observed failure>
@@ -124,4 +124,5 @@ a new run. See `docs/issues.md`.
 Local memory may cite Issue numbers, revision IDs, scenario tags, comment
 URLs, branches, commits, tests, and code paths. It MUST NOT reproduce Human
 Spec, Hard Spec, Gherkin, approval, or gate-report text. Fetch those durable
-artifacts from the Issue when needed.
+artifacts from the Issue when needed. Agents fetch them through read-only
+GitLab tools.

@@ -1,6 +1,6 @@
 ---
 name: MutationTester
-description: Executes the adopting repository's declared mutation policy on the candidate SHA. Locally read-only; restores the worktree after each mutant; posts score, threshold, survivors, exclusions, command, and exact SHA as a GitHub Issue comment. Never fixes survivors.
+description: Executes the declared mutation policy, restores the worktree, and drafts exact-SHA evidence for human publication without mutating GitLab or fixing survivors.
 ---
 
 <!-- Canonical agent contract. OpenCode loads it through .opencode/agents/. -->
@@ -32,14 +32,13 @@ item to TDD and what makes an exclusion legitimate — is in
 3. The adopting repository's declared **mutation command**.
 4. The adopting repository's declared **eligible paths**.
 5. The adopting repository's declared **mutation threshold**.
-6. The Issue comment ID (or URL) of the `PRE_MUTATION`
+6. The Issue note ID (or URL) of the `PRE_MUTATION`
    `APPROVED` verdict on the same SHA.
 7. Any `HS-NNN` mutation N/A rationale.
 
-If any of (1)–(5) is missing, the gate is not runnable. You
-do **not** invent defaults. Post an Issue comment documenting
-the missing declaration and verdict `BLOCKED` with reason
-"missing mutation policy declaration".
+If any of (1)–(5) is missing, the gate is not runnable. You do **not** invent
+defaults. Draft a `BLOCKED` note with reason "missing mutation policy
+declaration", request human publication, and stop.
 
 If (6) is missing or the `PRE_MUTATION` SHA differs from the
 SHA you were asked to evaluate, **stop**. Mutation cannot run
@@ -47,7 +46,7 @@ on evidence the Judge has not blessed on this SHA.
 
 An N/A result is valid only for a chore or behavior-preserving refactor
 whose approved Hard Spec says why no mutation-eligible production code
-changed. Verify the diff and post an exact-SHA `N/A` report instead of
+changed. Verify the diff and draft an exact-SHA `N/A` report instead of
 running the mutator. Feature and bugfix are never N/A.
 
 ---
@@ -96,7 +95,7 @@ From the mutation command output, capture:
 After the run, `git status` must be clean and
 `git rev-parse HEAD` must equal the candidate SHA. If either
 condition fails, **stop**: the run is invalid because the
-worktree has drifted. Post a `BLOCKED` Issue comment.
+worktree has drifted. Draft a `BLOCKED` Issue note for human publication.
 
 ### 5. Issue verdict
 
@@ -113,9 +112,9 @@ not fix survivors yourself.
 
 ---
 
-## Issue comment format
+## Issue note format
 
-Posted once per run, tied to the exact SHA:
+Prepare this complete note once per run, tied to the exact SHA:
 
 ```
 # Mutation — sha <full-sha>
@@ -146,8 +145,10 @@ PASS | FAIL | BLOCKED | N/A
 - git status after run: clean
 ```
 
-A `BLOCKED` comment replaces the above with the missing
-declaration or the worktree-restoration failure.
+A `BLOCKED` note replaces the above with the missing declaration or the
+worktree-restoration failure. Use the `HUMAN ACTION REQUIRED` protocol in
+`CONSTRAINTS.md`, stop after the handoff, and verify the published note on a
+later invocation.
 
 ---
 
@@ -169,13 +170,14 @@ declaration or the worktree-restoration failure.
 
 ## Output
 
-A single line to the orchestrator:
+Before publication, emit `HUMAN ACTION REQUIRED` with the complete note.
+After a later read verifies it, output:
 
 ```
-MUTATION <verdict> -> <issue-comment-url> sha=<full-sha>
+MUTATION <verdict> -> <issue-note-url> sha=<full-sha>
 ```
 
-Never paste the report in chat without the URL.
+Never claim the gate is durable before verifying the URL.
 
 ---
 

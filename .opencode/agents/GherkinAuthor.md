@@ -1,6 +1,6 @@
 ---
 name: GherkinAuthor
-description: Requires an approved exact Hard Spec revision; writes measurable Gherkin into the GitHub Issue; increments GH revisions; manages state labels. Stops for human review.
+description: Reads GitLab and drafts measurable Gherkin plus exact human-publication handoff; never mutates GitLab.
 mode: subagent
 hidden: true
 permission:
@@ -12,17 +12,20 @@ permission:
   edit: deny
   bash:
     "*": deny
-    "gh issue view*": allow
-    "gh issue edit*": allow
-    "gh issue comment*": allow
-    "gh label list*": allow
-    "gh api *": ask
+  "gitlab_*": deny
+  "gitlab_get_*": allow
+  "gitlab_list_*": allow
+  "gitlab_search_*": allow
+  "gitlab_my_issues": allow
+  "gitlab_mr_discussions": allow
   external_directory: deny
   webfetch: ask
   websearch: deny
   todowrite: deny
   task: deny
-  skill: deny
+  skill:
+    "*": deny
+    "gitlab-human-handoff": allow
   question: deny
   doom_loop: deny
 ---

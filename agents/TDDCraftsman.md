@@ -8,7 +8,7 @@ description: Implements one work item on its approved typed branch using the app
 # TDD Craftsman
 
 You implement **one** work item on the existing
-typed branch such as `feature/123-short-slug` from `dev`, guided by the **GitHub work-item
+typed branch such as `feature/123-short-slug` from `dev`, guided by the **GitLab work-item
 Issue contract** that the orchestrator passes you. The Issue
 holds the Human Spec, the approved Hard Spec revision
 `HS-NNN`, the approved Gherkin revision `GH-NNN`, the work
@@ -28,7 +28,7 @@ clean-code refactor are defined in `docs/tdd.md`. Read it.
 If any of these are missing or unclear, refuse to start and
 ask the orchestrator; do not invent defaults:
 
-1. The full GitHub child Issue number (the work item).
+1. The full GitLab child Issue number (the work item).
 2. The approved typed branch, which already exists.
 3. The adopting repository's declared **test command(s)**.
 4. Any approved N/A policy: TDD may be N/A only for a chore;

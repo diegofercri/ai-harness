@@ -84,11 +84,12 @@ The `type:*` label on the Issue changes the Gherkin obligation.
 
 ## 5. Revisions and approval
 
-- `GherkinAuthor` posts an immutable draft comment at `GH-NNN`. The
-  state label moves to `state:gherkin-review`.
+- `GherkinAuthor` drafts an immutable `GH-NNN` note and requests exact human
+  publication plus the transition to `state:gherkin-review`.
+- A later invocation re-reads GitLab and verifies the note and label.
 - A human posts `APPROVED GHERKIN GH-NNN` as an Issue comment (never
-  the body, never a checkbox). The agent verifies the author is an
-  authorized human.
+  the body, never a checkbox) separately from publication. The agent verifies
+  the author is an authorized human.
 - A new Gherkin comment supersedes and invalidates approval of the prior
   Gherkin revision only. Publish the next sequential `GH-NNN`.
 - A changed Human Spec or new Hard Spec revision invalidates both active

@@ -2,7 +2,7 @@
 
 > The orchestrator never says "it works"; it proves it on a
 > specific SHA. Two judge stages and one mutation pass produce
-> the only evidence that opens a PR. Missing declarations in
+> the only evidence that opens an MR. Missing declarations in
 > the adopting repository **block** the relevant gate; the
 > template never invents a language, source layout, test command,
 > mutation command, eligible path, or threshold.
@@ -13,15 +13,15 @@
 
 For every work item, a candidate HEAD exists on an approved typed branch
 such as `feature/123-short-slug`. That HEAD is the **only** thing under
-review. Evidence is durable GitHub Issue comments anchored to
-the exact commit SHA, not local files. Reporting does not
-alter the SHA.
+review. Evidence is durable GitLab Issue notes anchored to the exact commit
+SHA, not local files. Agents draft the evidence and humans publish it;
+reporting does not alter the SHA.
 
-The agent does not say it works — it runs the declared
-project commands, copies the **real** output, and posts it
-on the Issue. A green suite, a passing mutation, or a Judge verdict
-`APPROVED` without a SHA-anchored Issue comment is not
-evidence.
+The agent does not say it works. It runs the declared project commands,
+copies the **real** output, and provides the complete note in a
+`HUMAN ACTION REQUIRED` handoff. A human publishes the note and the agent
+verifies it through a later read. A green suite, passing mutation, or Judge
+verdict `APPROVED` without a verified SHA-anchored Issue note is not evidence.
 
 ---
 
@@ -72,11 +72,10 @@ deliberately red state, no failing test committed by design
 
 ## 4. The two-stage Judge
 
-The `Judge` subagent runs **twice** on the **same unchanged
-SHA**. Each stage has its own verdict and its own Issue
-comment; once posted, the comment is the durable artifact.
-Any code or test change after the comment invalidates the
-prior verdict.
+The `Judge` subagent runs **twice** on the **same unchanged SHA**. Each stage
+has its own verdict and human-published Issue note; once verified, the note is
+the durable artifact. Any code or test change after publication invalidates
+the prior verdict.
 
 ### 4.1 Stage `PRE_MUTATION`
 
@@ -102,9 +101,9 @@ The judge validates:
 | Clean-code refactor                    | Evidence in `progress.md` that the final scope-limited refactor happened (see `docs/tdd.md` §6). |
 | Mutation evidence                      | **Not yet required.** The judge issues `APPROVED` only if the items above hold; mutation is the next gate. |
 
-The verdict is either `APPROVED` or `CHANGES_REQUESTED`,
-posted as an Issue comment tied to the SHA. On `APPROVED`,
-the orchestrator advances to mutation.
+The verdict is either `APPROVED` or `CHANGES_REQUESTED`. The Judge drafts the
+SHA-bound note, requests human publication, stops, and verifies the note on a
+later invocation. Only a verified `APPROVED` advances to mutation.
 
 ### 4.2 Stage `FINAL`
 
@@ -119,7 +118,7 @@ The judge re-validates the items above **plus**:
 | Mutation evidence                      | Issue comment with score, threshold, survivors, exclusions, command, and the same SHA. |
 | SHA freshness                          | Candidate HEAD did not change between `PRE_MUTATION`, mutation, and `FINAL`. |
 
-Only `FINAL` `APPROVED` permits PR creation. Any change in
+Only `FINAL` `APPROVED` permits MR creation. Any change in
 between rewinds the loop: TDD → `PRE_MUTATION` → mutation →
 `FINAL`.
 
@@ -130,8 +129,8 @@ between rewinds the loop: TDD → `PRE_MUTATION` → mutation →
 - The judge **never** approves a `FINAL` whose SHA drifted
   from the prior `PRE_MUTATION`. Drift means the evidence is
   no longer evidence.
-- The judge **never** accepts a chat-only report. The Issue
-  comment on the SHA is the deliverable.
+- The judge **never** accepts an unverified handoff as durable evidence. The
+  human-published Issue note on the SHA is the durable deliverable.
 
 ---
 
@@ -143,10 +142,9 @@ the declared threshold. Full mechanics, including how a
 survivor returns the work item to TDD, are in
 `docs/mutation-testing.md`.
 
-The mutation report is a single Issue comment carrying the
-exact SHA, the exact command, the threshold, the score, and
-the survivor list with handling (real / equivalent /
-out-of-scope).
+The mutation report is a single human-published Issue note drafted by
+`MutationTester`. It carries the exact SHA, command, threshold, score, and
+survivor list with handling (real / equivalent / out-of-scope).
 
 ---
 
@@ -161,7 +159,7 @@ N/A is a per-gate declaration, not a per-feature preference:
   with no eligible production-code change, when `HS-NNN` approves the
   rationale and the mutation Issue comment records it.
 - **Judge** is never N/A. Both stages run; one or both may
-  approve, and both must on the path to PR.
+  approve, and both must on the path to MR.
 
 A missing N/A justification is not a default N/A — it is a
 missing declaration that blocks the gate.
@@ -176,14 +174,14 @@ moving reference:
 ```
 candidate HEAD on typed branch   (green, memory finalized)
   │
-  ├── Judge PRE_MUTATION          → Issue comment APPROVED on SHA
+  ├── Judge PRE_MUTATION          → human-published Issue note APPROVED on SHA
   │
-  ├── Mutation pass               → Issue comment PASS|FAIL on SHA
+  ├── Mutation pass               → human-published Issue note PASS|FAIL on SHA
   │       └── on FAIL or survivor → back to TDD, evidence stale
   │
-  ├── Judge FINAL                 → Issue comment APPROVED on SHA
+  ├── Judge FINAL                 → human-published Issue note APPROVED on SHA
   │
-  └── PR creation allowed         → PR opened from typed branch
+  └── Human MR action allowed     → branch pushed and MR opened by a human
 ```
 
 If at any point the SHA changes, the loop rewinds to TDD.
@@ -200,8 +198,8 @@ The orchestrator's last act on a work item is to confirm:
 2. The mutation step on the same SHA is `PASS` (or N/A with
    documented justification).
 3. No commit followed the `FINAL` comment on that SHA.
-4. The PR opened from the typed work branch references the SHA
-   that carried the `FINAL` approval.
+4. A human pushed the typed work branch and opened an MR referencing the SHA
+   that carried the `FINAL` approval; a later GitLab read verified both.
 
-If any item fails, no PR is opened; the orchestrator returns
+If any item fails, the orchestrator does not request MR creation; it returns
 to the first unsatisfied gate and re-runs.

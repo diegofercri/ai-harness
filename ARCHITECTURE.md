@@ -1,8 +1,8 @@
 # Architecture
 
 This document is the canonical description of the repository layout,
-the artifacts the lifecycle produces, and how they relate to GitHub.
-The GitHub Issue is the contract and lifecycle source; nothing in the
+the artifacts the lifecycle produces, and how they relate to GitLab.
+The GitLab Issue is the contract and lifecycle source; nothing in the
 codebase may contradict it.
 
 ## Repository layout
@@ -18,7 +18,7 @@ codebase may contradict it.
 | `docs/conventions.md`                               | Template terminology, IDs, revisions, paths.                       |
 | `docs/issues.md`                                    | Issue roles, revisions, labels, approvals, and reopening rules.    |
 | `docs/memory.md`                                    | Colocated progress, decisions, and immutable run records.           |
-| `docs/workflow.md`                                  | Canonical lifecycle, gates, artifacts, branches, and PR rules.       |
+| `docs/workflow.md`                                  | Canonical lifecycle, gates, artifacts, branches, and MR rules.       |
 | `docs/tdd.md`                                       | Test-driven development discipline.                                 |
 | `docs/gherkin.md`                                   | Gherkin contract format.                                            |
 | `docs/mutation-testing.md`                          | Mutation testing policy.                                            |
@@ -26,7 +26,9 @@ codebase may contradict it.
 | `agents/`                                           | Canonical, tool-portable agent role contracts.                      |
 | `.opencode/agents/`                                 | OpenCode adapters that load canonical contracts and enforce permissions. |
 | `skills/`                                           | OpenCode skill definitions (for example `clean-code`).              |
-| `.github/`                                          | Issue Forms, PR template, and mechanical PR checks.                 |
+| `.gitlab/`                                          | Telcryp-derived Issue templates plus the harness MR template.       |
+| `.gitlab-ci.yml`                                    | GitLab MR pipeline entry point.                                     |
+| `scripts/enforce-dev-mr.sh`                         | Mechanical MR policy validator.                                    |
 | `<feature-root>/.ai/work-items/<issue-number>-<slug>/`     | Durable local memory for one Issue.                                 |
 
 ## Artifact model
@@ -40,7 +42,7 @@ codebase may contradict it.
   - Human approval and exact-SHA quality-gate comments.
 - **Parent Request Issue** (`harness:request` label, optional). May
   reference one or many child Issues. It NEVER receives code, a
-  branch, or a PR.
+  branch, or an MR.
 
 ### Revisions
 
@@ -60,14 +62,22 @@ Approval ordering:
 1. Hard Spec approval precedes Gherkin approval.
 2. Gherkin approval precedes branch creation.
 
-## Branch and PR model
+## Branch and MR model
 
-- The base branch is `dev`. `main` is never a PR base.
+- The base branch is `dev`. `main` is never an MR base.
 - Branches MUST be cut from `dev` and named exactly
   `feature/`, `bugfix/`, `chore/`, or `refactor/` followed by
   `<issue-number>-<slug>`.
-- The PR base MUST be `dev`. After merge, the orchestrator closes the
-  work-item Issue and applies `state:done`.
+- The MR base MUST be `dev`. After merge, the orchestrator requests human
+  Issue closure and `state:done`, then verifies both.
+
+## GitLab interaction model
+
+Agents inspect GitLab through read-only MCP tools. Agent-authored revisions
+and gate reports are drafts until a human publishes their exact payload.
+Labels, pushes, approvals, Issue state, and merge requests are also
+human-performed operations. Every such boundary uses a verifiable
+`HUMAN ACTION REQUIRED` handoff; see `CONSTRAINTS.md`.
 
 ## Local memory model
 
@@ -96,11 +106,11 @@ satisfied. Changed scope or a later regression receives a new Issue.
 
 The previous run file stays immutable. A reopened, unchanged contract
 may start another delivery episode on a newly created canonical branch;
-only one branch and PR may be active for the Issue at a time.
+only one branch and MR may be active for the Issue at a time.
 
 ## Gate model
 
 `CHECKPOINTS.md` lists the gates. Any candidate HEAD change invalidates
 prior gate results. The Judge MUST run twice on the same exact HEAD
 (`PRE_MUTATION` before mutation testing and `FINAL` after it) before
-a PR is opened.
+an MR is opened.

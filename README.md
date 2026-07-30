@@ -6,7 +6,7 @@ portable; OpenCode is the first-class runner.
 
 ## What this template gives you
 
-- A canonical contract: every change lives inside one atomic GitHub
+- A canonical contract: every change lives inside one atomic GitLab
   child Issue that carries an immutable **Human Spec**, an **AI Hard
   Spec** (revision `HS-NNN`), and an **AI Gherkin** (revision
   `GH-NNN`).
@@ -14,8 +14,8 @@ portable; OpenCode is the first-class runner.
   minimal `opencode.json` with `Leader` as the default
   orchestrator.
 - A gate-based lifecycle (Hard Spec → Gherkin → TDD → Refactor →
-  Judge `PRE_MUTATION` → Mutation → Judge `FINAL` → PR) that ends with
-  a pull request into `dev`, never `main`.
+  Judge `PRE_MUTATION` → Mutation → Judge `FINAL` → MR) that ends with
+  a merge request into `dev`, never `main`.
 - Durable local memory that lives next to the code, under
   `<feature-root>/.ai/work-items/<issue-number>-<slug>/`.
 - Stack-agnostic policies: the project, not the template, defines the
@@ -32,39 +32,46 @@ portable; OpenCode is the first-class runner.
    Other install methods (npm, Homebrew, pacman, Scoop, Mise, Docker)
    are listed at <https://opencode.ai/docs/>.
 
-2. Configure an LLM provider in OpenCode. The simplest path is
-   OpenCode Zen: run `/connect` inside the TUI and follow the prompts.
-3. Use this repository as a template, or merge its content into an
+2. Configure an LLM provider in OpenCode.
+3. Configure a GitLab MCP server in read-only mode. The runtime MUST expose
+   inspection tools only; use `--permission-mode=readonly` or the compatible
+   `--read-only=true` flag for `@zereight/mcp-gitlab`.
+4. Use this repository as a template, or merge its content into an
    existing repository.
-4. Create the required GitHub `dev` branch, labels, approval policy,
+5. Create the required GitLab `dev` branch, labels, approval policy,
    and branch-protection rule described below.
-5. Configure the project test and mutation policies.
-6. Restart OpenCode after installing or changing the configuration,
+6. Configure the Telcryp Issue templates from
+   `https://gitlab.telcryp/telcryp/productos/plantillas`.
+7. Configure the project test and mutation policies.
+8. Restart OpenCode after installing or changing the configuration,
    agents, or skills. OpenCode loads them only at startup.
 
-## Required GitHub setup
+## Required GitLab setup
 
-- A protected `dev` branch. Pull requests MUST target `dev`. `main` is
-  never a PR base.
-- A PR policy check (for example
-  `.github/workflows/enforce-dev-pr.yml`) that mechanically rejects
-  PRs whose base is not `dev`.
+- A protected `dev` branch. Merge requests MUST target `dev`. `main` is
+  never an MR target.
+- A required successful `enforce-dev-mr` GitLab CI job from
+  `.gitlab-ci.yml`.
 - Role labels: `harness:request` and `harness:work-item`.
 - Type labels: `type:feature`, `type:bugfix`, `type:chore`, and
   `type:refactor`.
 - State labels: `state:human-spec`, `state:hard-spec-review`,
   `state:gherkin-review`, `state:ready`, `state:in-progress`,
-  `state:blocked`, `state:pr-ready`, and `state:done`.
+  `state:blocked`, `state:mr-ready`, and `state:done`.
 - A documented policy that identifies which human accounts may approve
   Hard Spec and Gherkin revisions. Missing approval policy blocks work.
+- The canonical Telcryp description templates from
+  `https://gitlab.telcryp/telcryp/productos/plantillas`. This branch mirrors
+  `Historia de usuario` and `QA - Bug` and adds only a `Gherkin` section to
+  each.
 
-For auditable gates, run AI GitHub writes through a bot identity that is
-not on the human approver list. If AI and human actions share one GitHub
-identity, the project MUST define another verifiable manual-attestation
-mechanism before treating comments as approvals.
+Agents never mutate GitLab. They inspect with the read-only MCP and emit an
+exact `HUMAN ACTION REQUIRED` handoff for notes, labels, pushes, Issue state,
+and merge requests. A later invocation re-reads GitLab before continuing.
 
-Issue Forms can apply only labels that already exist. Create these labels
-before opening the first work item.
+Create the workflow labels before opening the first work item. Agents may
+draft a populated template, but a human must create or update the Issue and
+apply its labels.
 
 ## Required branch names
 
@@ -110,8 +117,10 @@ thresholds but never invent defaults.
 │   └── verification.md                  Verification levels
 ├── agents/                              Canonical portable agent contracts
 ├── .opencode/agents/                    OpenCode runtime adapters and permissions
-├── .github/                             Issue Forms, PR template, and policy check
-└── skills/                              Reusable skills, including clean-code
+├── .gitlab/                             Issue and MR description templates
+├── .gitlab-ci.yml                       Mechanical MR policy check
+├── scripts/enforce-dev-mr.sh            Locally testable MR policy validator
+└── skills/                              Reusable skills, including GitLab handoff and clean-code
 ```
 
 ## Portability
@@ -124,3 +133,5 @@ thresholds but never invent defaults.
   to any agent runtime that can read the Issue and the files.
 - Agent behavior is authored once in `agents/`. OpenCode adapters under
   `.opencode/agents/` load those contracts and add runtime permissions.
+- GitLab mutations are always performed by a human; this boundary does not
+  depend on the model or agent runtime.

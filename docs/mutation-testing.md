@@ -75,25 +75,24 @@ the declared threshold, and reports the result.
   handle this in a `finally`-equivalent; the agent verifies
   and recovers manually if it does not).
 
-The mutation report is published as a **durable GitHub Issue
-comment** anchored to the candidate SHA, not as a local file.
-The mutation step is therefore append-only with respect to
-HEAD: posting a comment does not create a commit.
+The mutation report is drafted for publication as a **durable GitLab Issue
+note** anchored to the candidate SHA, not as a local file. A human publishes
+the exact handoff payload and a later agent read verifies it. The mutation
+step is therefore append-only with respect to HEAD.
 
 If `MutationTester` finds it cannot run the declared
 command (tool not installed, eligible paths missing on this
 branch, threshold not declared), it does **not** silently
-fall back. It blocks the gate, posts an Issue comment
-documenting the gap, and lets the orchestrator decide
-whether the adoption is incomplete or the policy needs an
-amendment.
+fall back. It blocks the gate, requests human publication of an Issue note
+documenting the gap, and lets the orchestrator decide whether the adoption is
+incomplete or the policy needs an amendment.
 
 ---
 
 ## 4. Reporting format on the Issue
 
-A mutation report — posted once per run, tied to the exact
-SHA being evaluated — contains:
+A mutation report, drafted once per run for exact human publication and tied
+to the evaluated SHA, contains:
 
 - The candidate SHA (full, not abbreviated) being evaluated.
 - The mutation command exactly as declared.
@@ -128,7 +127,7 @@ differently:
 
 2. **Equivalent mutant** — the mutation does not change
    observable behavior. **Action**: document in the Issue
-   comment with an explicit written justification citing the
+   note with an explicit written justification citing the
    behavior invariant that the mutation does not violate.
    Equivalence is a property of the code under mutation; it
    is not a property of the test suite.
@@ -156,7 +155,7 @@ There is **no fourth bucket**. "I'll fix it later" and
 
 A surviving mutant that returns to TDD makes the prior
 Judge evidence stale. The full loop runs again: TDD → Judge
-PRE_MUTATION → mutation → Judge FINAL → PR.
+PRE_MUTATION → mutation → Judge FINAL → human MR creation.
 
 ---
 
@@ -165,8 +164,8 @@ PRE_MUTATION → mutation → Judge FINAL → PR.
 Mutation may be marked **N/A** only when approved `HS-NNN` documents a
 project-specific reason and no mutation-eligible production code changes.
 This can apply to a chore or behavior-preserving refactor. The mutation
-Issue comment cites the approved rationale. There is no N/A by default,
-and never for a feature or bugfix.
+Issue note cites the approved rationale. There is no N/A by default, and
+never for a feature or bugfix.
 
 ---
 

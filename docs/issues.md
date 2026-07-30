@@ -1,6 +1,6 @@
 # Issues
 
-GitHub Issues replace any local feature registry. The Issue and its
+GitLab Issues replace any local feature registry. The Issue and its
 comments are the contract, approval record, lifecycle record, and quality
 evidence for a work item.
 
@@ -8,8 +8,8 @@ evidence for a work item.
 
 | Role | Label | Purpose | Delivery |
 | --- | --- | --- | --- |
-| Parent request | `harness:request` | Optional container that decomposes a broad request into atomic children. | No branch or PR. |
-| Work item | `harness:work-item` | One independently specifiable, implementable, verifiable change. | One active branch and PR per run. |
+| Parent request | `harness:request` | Optional container that decomposes a broad request into atomic children. | No branch or MR. |
+| Work item | `harness:work-item` | One independently specifiable, implementable, verifiable change. | One active branch and MR per run. |
 
 A parent may reference several work items. It never owns their contract or
 approval. A work item contains one Human Spec and one active Hard Spec and
@@ -17,25 +17,38 @@ Gherkin revision at a time.
 
 ## Work-Item Body
 
-The work-item Issue Form records human-owned intake:
+The canonical description-template source is:
 
-- Human Spec
-- work type
-- slug
-- optional parent and related Issues
-- optional proposed feature root
-- supporting context
+```text
+https://gitlab.telcryp/telcryp/productos/plantillas
+```
 
-The Human Spec remains in the Issue body exactly as supplied. AI agents
-MUST NOT rewrite it. If a human edits it after approval, all downstream
-Hard Spec and Gherkin approvals become stale.
+This branch mirrors two templates from that project:
+
+- `Historia de usuario` for feature work.
+- `QA - Bug` for bugfix work.
+
+Their source sections remain unchanged. The only local addition is the
+`Gherkin` section requested for both templates. For chore, refactor, or a
+specialized product flow, a human selects the applicable template from the
+central catalog; agents MUST NOT invent or append template sections.
+
+The complete populated Issue description is the Human Spec. It remains in
+the Issue body exactly as published by a human. Agents may draft field
+content in a `HUMAN ACTION REQUIRED` handoff but MUST NOT update GitLab
+themselves or alter the template structure. If a human edits the description
+after approval, all downstream Hard Spec and Gherkin approvals become stale.
+
+The template's `Gherkin` field is human-owned intake. The revisioned
+`GH-NNN` note described below remains the approved acceptance artifact.
 
 Hard Spec and Gherkin revisions are append-only Issue comments, not body
 edits. This preserves their history and avoids rewriting the Human Spec.
 
 ## Hard Spec Revisions
 
-`SpecPartner` posts one comment per revision:
+`SpecPartner` drafts one note per revision. A human publishes the exact
+payload from the agent's `HUMAN ACTION REQUIRED` handoff:
 
 ````markdown
 # Hard Spec HS-001
@@ -84,8 +97,8 @@ derived from it.
 
 ## Gherkin Revisions
 
-After an exact Hard Spec revision is approved, `GherkinAuthor` posts a
-new comment:
+After an exact Hard Spec revision is approved, `GherkinAuthor` drafts a new
+note and a human publishes its exact handoff payload:
 
 ````markdown
 # Gherkin GH-001
@@ -119,14 +132,13 @@ APPROVED GHERKIN GH-NNN
 
 The author MUST satisfy the adopting repository's authorized-human policy.
 AI agents MUST NOT write, imitate, relay, or infer an approval comment.
-Labels, reactions, PR reviews, chat statements, and approximate wording do
+Labels, reactions, MR reviews, chat statements, and approximate wording do
 not count.
 
-Use a distinct bot identity for AI-authored GitHub writes whenever possible;
-that identity MUST NOT be an authorized approver. If AI and human actions
-share one GitHub identity, the repository MUST define an additional
-verifiable manual-attestation mechanism. Account authorship alone is then
-insufficient. Missing or ambiguous approval policy blocks the workflow.
+Agents never write to GitLab. Human publication of an AI-drafted revision or
+gate report is an operational action, not approval. Approval requires a
+separate exact comment by an account allowed by the repository's authorized
+human policy. Missing or ambiguous approval policy blocks the workflow.
 
 Approval validity:
 
@@ -138,8 +150,8 @@ Approval validity:
 
 ## Labels
 
-Create all labels before using the workflow. Issue Forms cannot create
-missing labels.
+Create all labels before using the workflow. A human applies them after
+creating or updating the Issue.
 
 Role, exactly one:
 
@@ -163,12 +175,12 @@ State, exactly one on every work item:
 | `state:ready` | Both active revisions are approved; no implementation branch is active. |
 | `state:in-progress` | An implementation branch and local run are active. |
 | `state:blocked` | A documented prerequisite prevents progress. |
-| `state:pr-ready` | A PR to `dev` is open. |
+| `state:mr-ready` | An MR to `dev` is open. |
 | `state:done` | Delivery merged into `dev`; the Issue is closed. |
 
-## Branches, PRs, And Reopening
+## Branches, MRs, And Reopening
 
-The normal case is one work item, one run, one branch, and one PR. The
+The normal case is one work item, one run, one branch, and one MR. The
 branch is created from current `dev` only after both approvals and matches:
 
 ```text
@@ -178,13 +190,14 @@ chore/123-short-slug
 refactor/123-short-slug
 ```
 
-Only one branch and PR may be active for a work item. After merge, the
-orchestrator closes the Issue and applies `state:done`.
+Only one branch and MR may be active for a work item. After merge, the
+orchestrator asks a human to close the Issue and apply `state:done`, then
+verifies both through GitLab.
 
 If the original approved contract is later shown never to have been
 satisfied, reopen the same Issue, create the next local run, and recreate
 the canonical branch from current `dev`. The Issue may therefore have more
-than one historical PR, but never concurrent delivery branches.
+than one historical MR, but never concurrent delivery branches.
 
 Create a new work-item Issue instead when:
 
@@ -197,3 +210,10 @@ Create a new work-item Issue instead when:
 Human Spec, Hard Spec, Gherkin, approvals, labels, and quality-gate comments
 live only in the Issue. Local memory stores identifiers, links, progress,
 and implementation decisions. It MUST NOT copy contract text.
+
+## Read-Only Agent Boundary
+
+Agents read the Issue, notes, labels, approvals, and merge requests through
+GitLab MCP tools. Every remote mutation uses the handoff format in
+`CONSTRAINTS.md`. A requested mutation does not change lifecycle state; only
+a later GitLab read can verify that a human performed it.

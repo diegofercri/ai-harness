@@ -1,6 +1,6 @@
 ---
 name: MutationTester
-description: Executes the adopting repository's declared mutation policy on the candidate SHA. Locally read-only; restores the worktree after each mutant; posts score, threshold, survivors, exclusions, command, and exact SHA as a GitHub Issue comment. Never fixes survivors.
+description: Executes mutation testing and drafts exact-SHA evidence for human publication; locally and remotely read-only.
 mode: subagent
 permission:
   read: allow
@@ -21,13 +21,18 @@ permission:
     "git commit*": deny
     "git push*": deny
     "git add*": deny
-    "gh issue view*": allow
-    "gh issue comment*": allow
-    "gh api *": deny
     "rm -rf*": deny
+  "gitlab_*": deny
+  "gitlab_get_*": allow
+  "gitlab_list_*": allow
+  "gitlab_search_*": allow
+  "gitlab_my_issues": allow
+  "gitlab_mr_discussions": allow
   task:
     "*": deny
-  skill: deny
+  skill:
+    "*": deny
+    "gitlab-human-handoff": allow
   webfetch: deny
   websearch: deny
   external_directory: deny

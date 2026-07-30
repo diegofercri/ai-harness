@@ -1,6 +1,6 @@
 ---
 name: Leader
-description: Primary orchestrator for the Issue-driven spec, Gherkin, TDD, Judge, mutation, and dev-PR lifecycle; never edits production code or tests.
+description: Read-only GitLab orchestrator for the spec, Gherkin, TDD, Judge, mutation, and dev-MR lifecycle; remote writes require human intervention.
 mode: primary
 permission:
   edit: deny
@@ -20,16 +20,12 @@ permission:
     "git switch -c bugfix/*": allow
     "git switch -c chore/*": allow
     "git switch -c refactor/*": allow
-    "gh issue view*": allow
-    "gh issue list*": allow
-    "gh issue edit*": allow
-    "gh issue comment*": allow
-    "gh issue close*": allow
-    "gh pr view*": allow
-    "gh pr list*": allow
-    "gh pr create*": allow
-    "gh label list*": allow
-    "gh api *": ask
+  "gitlab_*": deny
+  "gitlab_get_*": allow
+  "gitlab_list_*": allow
+  "gitlab_search_*": allow
+  "gitlab_my_issues": allow
+  "gitlab_mr_discussions": allow
   task:
     "*": deny
     "SpecPartner": allow
@@ -38,6 +34,9 @@ permission:
     "Judge": allow
     "MutationTester": allow
     "explore": allow
+  skill:
+    "*": deny
+    "gitlab-human-handoff": allow
   webfetch: deny
   websearch: deny
   external_directory: deny

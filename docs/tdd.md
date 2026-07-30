@@ -1,6 +1,6 @@
 # Strict TDD — the discipline of `TDDCraftsman`
 
-> Stack-agnostic. The contract lives in a GitHub child Issue.
+> Stack-agnostic. The contract lives in a GitLab child Issue.
 > The code lives in the work branch. The proof lives in a runnable
 > test that asked for it. This file is the discipline; the
 > project's exact test command, code paths, and layout are declared
@@ -9,9 +9,9 @@
 
 ---
 
-## 1. The contract: GitHub child Issue is the source of truth
+## 1. The contract: GitLab child Issue is the source of truth
 
-Before any line is written, the atomic GitHub work-item Issue
+Before any line is written, the atomic GitLab work-item Issue
 holds all of these and **only** these are
 binding:
 
@@ -209,11 +209,11 @@ Before invoking Judge and mutation gates:
 5. The Issue contract fields (Human Spec, `HS-NNN`, `GH-NNN`,
    work type, feature root) are unchanged by this branch.
 
-The Judge and mutation reports are durable Issue comments
-tied to the exact commit SHA, not local files, so reporting
-does not alter HEAD. Any commit after those comments were posted
-invalidates **both** Judge and mutation
-evidence, and they must run again.
+The Judge and mutation reports become durable Issue notes only after a human
+publishes the exact agent-drafted payload and a later read verifies it. They
+remain tied to the exact commit SHA, not local files, so reporting does not
+alter HEAD. Any commit after publication invalidates **both** Judge and
+mutation evidence, and they must run again.
 
 ---
 

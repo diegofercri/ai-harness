@@ -27,13 +27,19 @@ permission:
     "git reset*": deny
     "git revert*": deny
     "git restore*": deny
-    "gh issue view*": allow
-    "gh issue edit*": deny
-    "gh api *": deny
     "rm -rf*": deny
+  "gitlab_*": deny
+  "gitlab_get_*": allow
+  "gitlab_list_*": allow
+  "gitlab_search_*": allow
+  "gitlab_my_issues": allow
+  "gitlab_mr_discussions": allow
   task:
     "*": deny
-  skill: allow
+  skill:
+    "*": deny
+    "clean-code": allow
+    "gitlab-human-handoff": allow
   webfetch: deny
   websearch: deny
   external_directory: deny
